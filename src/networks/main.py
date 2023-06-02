@@ -45,6 +45,6 @@ def build_autoencoder(net_name):
         ae_net = CIFAR10_LeNet_ELU_Autoencoder()
 
     if net_name == 'cifar10_ResNet':
-        net = CIFAR10_ResNet_Autoencoder()
+        ae_net = CIFAR10_ResNet_Autoencoder()
 
     return ae_net

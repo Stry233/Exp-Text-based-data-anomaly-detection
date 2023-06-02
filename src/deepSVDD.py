@@ -107,6 +107,8 @@ class DeepSVDD(object):
 
         # Filter out decoder network keys
         ae_net_dict = {k: v for k, v in ae_net_dict.items() if k in net_dict}
+        # for layer_name, weight in ae_net_dict.items():
+        #     print(f"Layer: {layer_name}, Shape: {weight.shape}")
         # Overwrite values in the existing state_dict
         net_dict.update(ae_net_dict)
         # Load the new state_dict

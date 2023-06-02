@@ -80,7 +80,7 @@ def main(dataset_name, net_name, load_model, data_path, save_path, normal_class)
     # Load Deep SVDD model (radius R, center c, network weights, and possibly autoencoder weights)
     deep_SVDD.load_model(model_path=load_model, load_ae=False)
 
-    # Get test data loader
+    # Get train data loader
     train_loader, _ = dataset.loaders(batch_size=1, num_workers=8)
 
     logger.info('Start evaluation...')
