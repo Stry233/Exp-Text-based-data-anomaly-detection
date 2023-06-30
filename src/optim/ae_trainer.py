@@ -1,3 +1,5 @@
+from transformers import AutoTokenizer
+
 from base.base_trainer import BaseTrainer
 from base.base_dataset import BaseADDataset
 from base.base_net import BaseNet
@@ -43,14 +45,19 @@ class AETrainer(BaseTrainer):
             n_batches = 0
             epoch_start_time = time.time()
             for data in train_loader:
-                inputs, _, _ = data
+                inputs, labels, idx = data
                 inputs = inputs.to(self.device)
-
+                if isinstance(inputs, tuple):
+                    tokenizer = AutoTokenizer.from_pretrained('gpt2')
+                    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+                    inputs = tokenizer(inputs, return_tensors="pt", padding='max_length', truncation=True,
+                                       max_length=25).to(self.device)
                 # Zero the network parameter gradients
                 optimizer.zero_grad()
 
                 # Update network parameters via backpropagation: forward + backward + optimize
                 outputs = ae_net(inputs)
+                # print(outputs.shape, inputs.shape)
                 scores = torch.sum((outputs - inputs) ** 2, dim=tuple(range(1, outputs.dim())))
                 loss = torch.mean(scores)
                 loss.backward()
@@ -125,7 +132,7 @@ class AETrainer(BaseTrainer):
         test_time = time.time() - start_time
         if not is_during_train:
             logger.info('Test set Loss: {:.8f}'.format(loss_epoch / n_batches))
-            logger.info('Test set AUC: {:.2f}%'.format(100. * auc))
+            # logger.info('Test set AUC: {:.2f}%'.format(100. * auc))
             logger.info('Autoencoder testing time: %.3f' % test_time)
             logger.info('Finished testing autoencoder.')
 
